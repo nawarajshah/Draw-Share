@@ -76,7 +76,7 @@ return false;
 
 // Increase width of input
 function morewidth() {
-    $("#atchMsg").animate({ width: "1340px"}, 400);
+    $("#atchMsg").animate({ width: "1000px"}, 400);
     document.getElementById('SzIcon').className = "icon fa-arrow-right";
 }
 // Decrease width of input
