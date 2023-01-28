@@ -35,12 +35,12 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-$Squery = "SELECT sender, receiver, atchMsg, image, timeMs FROM msg WHERE sender = ? OR receiver = ? ORDER BY `msg`.`id` DESC";
+$Squery = "SELECT sender, receiver, image, timeMs FROM msg WHERE sender = ? OR receiver = ? ORDER BY `msg`.`id` DESC";
 
  if ($stmt = $conn->prepare($Squery)) {
    $stmt->bind_param("ss", $session_username, $session_username); 
    $stmt->execute(); 
-   $stmt->bind_result($sender, $receiver, $atchMsg, $image, $timeMs);
+   $stmt->bind_result($sender, $receiver, $image, $timeMs);
 echo '<div class="card-deck">'; 
 $i=0;
   while($stmt->fetch()) {
@@ -49,7 +49,6 @@ $i=0;
   <img class="card-img-top" src="data:image/jpeg;base64,'.base64_encode( $image ).'" alt="Card image">
   <div class="card-body">
     <h5 class="card-title text-capitalize">To '.$receiver.'</h5>
-    <p class="card-text">'.$atchMsg.'</p>
   </div>
   <div class="card-footer">
       <small class="text-muted">'.$timeMs.'</small>
@@ -61,7 +60,6 @@ $i=0;
   <img class="card-img-top" src="data:image/jpeg;base64,'.base64_encode( $image ).'" alt="Card image">
   <div class="card-body">
     <h5 class="card-title text-capitalize">From '.$sender.'</h5>
-    <p class="card-text">'.$atchMsg.'</p>
   </div>
   <div class="card-footer">
       <small class="text-muted">'.$timeMs.'</small>

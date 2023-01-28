@@ -1,0 +1,73 @@
+.sidePanel {
+    position: absolute;
+    top: 56px;
+    right: 0px;
+    width: 190px;
+    height: auto;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+
+.dark {
+    position: relative;
+    margin-top: 2px;
+    text-decoration: underline;
+}
+
+#colorCollection {
+    position: relative;
+    height: auto;
+    right: 5px;
+}
+
+#penRange {
+    position: relative;
+    top: 105px;
+    width: 170px;
+    display: flex;
+    justify-content: space-around;
+}
+
+#penRange > input{
+    width: 105px;
+}
+
+#searchFrn {
+    position: relative;
+    margin-top: 110px;
+    width: 170px;
+    z-index: 10;
+    border-radius: 5px;
+}
+
+#frnList {
+    position: relative;
+    margin-top: 10px;
+    width: 170px;
+    height: auto;
+    overflow: auto;
+    display: none;
+}
+
+.doIcon {
+    font-size: 30px;
+    cursor: pointer;
+}
+
+#drawingOption {
+    position: relative;
+    right: 5px;
+    line-height: 1.2;
+}
+
+#drawingOption1, #drawingOption2 {
+  display: flex;
+  justify-content: space-around;
+}
+
+#savBtn {
+    position: relative;
+    margin-top: 10px;
+    width: 170px;
+}
+

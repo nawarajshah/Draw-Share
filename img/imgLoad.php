@@ -6,12 +6,12 @@ if ($conn->connect_error) {
 	die("Connection failed: " . $conn->connect_error);
 }
 
-$Squery = "SELECT sender, receiver, atchMsg, image FROM msg WHERE sender = ? OR receiver = ?";
+$Squery = "SELECT sender, receiver, image FROM msg WHERE sender = ? OR receiver = ?";
 
  if ($stmt = $conn->prepare($Squery)) {
    $stmt->bind_param("ss", $session_username, $session_username); 
    $stmt->execute(); 
-   $stmt->bind_result($sender, $receiver, $atchMsg, $image);
+   $stmt->bind_result($sender, $receiver, $image);
 
   while($stmt->fetch()) {
   	if ($sender==$session_username) {
@@ -19,7 +19,6 @@ $Squery = "SELECT sender, receiver, atchMsg, image FROM msg WHERE sender = ? OR 
   <img class="card-img-top" src="data:image/jpeg;base64,'.base64_encode( $image ).'" alt="Card image">
   <div class="card-body">
     <h4 class="card-title text-capitalize">To '.$receiver.'</h4>
-    <p class="card-text">'.$atchMsg.'</p>
   </div>
 </div>';
   	}
@@ -28,7 +27,6 @@ $Squery = "SELECT sender, receiver, atchMsg, image FROM msg WHERE sender = ? OR 
   <img class="card-img-top" src="data:image/jpeg;base64,'.base64_encode( $image ).'" alt="Card image">
   <div class="card-body">
     <h4 class="card-title text-capitalize">From '.$sender.'</h4>
-    <p class="card-text">'.$atchMsg.'</p>
   </div>
 </div>';
   	}
