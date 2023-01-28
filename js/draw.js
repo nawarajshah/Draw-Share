@@ -1,72 +1,31 @@
-var canvas, ctx, flag = false,
-    prevX = 0,
-    currX = 0,
-    prevY = 0,
-    currY = 0,
-    dot_flag = false;
+var currentActiveDrawingOption = "";
+        
+var x = "#A7A9AC", y = 24;
     tcan = document.getElementById('toolCan');
     tctx = tcan.getContext("2d");
     tctx.clearRect(0, 0, 60, 35);
     tctx.beginPath();               
     tctx.moveTo(12, 35/2);               
     tctx.lineTo(48,35/2); 
-    tctx.strokeStyle = document.getElementById('colorPen').style.color;              
+    tctx.strokeStyle = '#A7A9AC';              
     tctx.lineWidth = 24; 
     tctx.lineCap = 'round';              
-    tctx.stroke();                      
-    
-var x = "#A7A9AC",
-    y = 24;
-
-function init() {
-    canvas = document.getElementById('can');
-    ctx = canvas.getContext("2d");
-    w = canvas.width;
-    h = canvas.height;
-
-    canvas.addEventListener("mousemove", function (e) {
-        findxy('move', e)
-    }, false);
-    canvas.addEventListener("mousedown", function (e) {
-        findxy('down', e)
-    }, false);
-    canvas.addEventListener("mouseup", function (e) {
-        findxy('up', e)
-    }, false);
-    canvas.addEventListener("mouseout", function (e) {
-        findxy('out', e)
-    }, false);
-    canvas.addEventListener("mousein", function (e) {
-        findxy('in', e)
-    }, false);
-}
-
-function range(tobj) {
-    t=tobj.value;
-    y=t;
-    tctx.clearRect(0, 0, 60, 35);
-    tctx.beginPath();               
-    tctx.moveTo(t/2, 35/2);               
-    tctx.lineTo(60-t/2,35/2);               
-    tctx.lineWidth = t; 
-    tctx.lineCap = 'round';              
-    tctx.stroke();
-}
+    tctx.stroke(); 
 
 function color(obj) {
     x=obj.id
-    if (x == "white") {
-        y = 48;
-        document.getElementById('EraserIcon').style.color = "#007bff";
-        document.getElementById('colorPen').style.color = "black";
-        document.getElementById('colorWidth').style.display = "none";
-        tctx.clearRect(0, 0, 60, 35);
+    y=document.getElementById('colorWidth').value;
+    // document.getElementById('colorPen').style.color = x;
+    document.getElementById('colorWidth').style.display = "inline";
+
+    canvas.freeDrawingBrush.color = x;
+    var checkObj = canvas.getActiveObject();
+    if (checkObj) 
+    {
+        if (checkObj.get('type')!='path') checkObj.set("fill", x);
+        checkObj.set("stroke", x);
+        canvas.renderAll();
     }
-    else {
-        y=document.getElementById('colorWidth').value;
-        document.getElementById('colorPen').style.color = x;
-        document.getElementById('EraserIcon').style.color = "black";
-        document.getElementById('colorWidth').style.display = "inline";
 
     tctx.clearRect(0, 0, 60, 35);
     tctx.beginPath();               
@@ -76,62 +35,125 @@ function color(obj) {
     tctx.lineWidth = y;  
     tctx.lineCap = 'round';             
     tctx.stroke();
+}
+
+// create a wrapper around native canvas element (with id="c")
+
+function switchDrawing(sd) {
+    switch(sd) {
+        case 'pointer':
+            canvas.isDrawingMode = false;
+            break;
+        case 'rectangle':
+            var rectangle = new fabric.Rect({
+            width: 100, 
+            height: 70, 
+            fill: x, 
+            left: 50, 
+            top: 50
+            });
+            canvas.add(rectangle);
+            break;
+        case 'triangle':
+            var triangle = new fabric.Triangle({
+            width: 100, 
+            height: 75, 
+            fill: x, 
+            left: 250, 
+            top: 50
+            });
+            canvas.add(triangle);
+            break;
+        case 'circle':
+            var circle = new fabric.Circle({
+            radius: 50,  
+            fill: x, 
+            left: 450, 
+            top: 50
+            });
+            canvas.add(circle);
+            break;
+        case 'line':
+            var line = new fabric.Line([50, 100, 200, 100], {
+            left: 650, 
+            top: 75,
+            stroke: x,
+            strokeWidth: 8
+            });
+            canvas.add(line);
+            break;
+        case 'text':
+            var addtext = new fabric.Textbox('Edit this text', {
+            left: 400,
+            top: 200,
+            fill: x,
+            strokeWidth: 2,
+            fontFamily: 'Arial'
+            });
+            canvas.add(addtext);
+            break;
+        case 'pen':
+            canvas.isDrawingMode = true;
+            break;
+        case 'eraser':
+            console.log('text')
+            canvas.freeDrawingBrush = new fabric.EraserBrush(canvas);
+            canvas.freeDrawingBrush.width = 30;
+            canvas.isDrawingMode = true;
+            break;
+        default:
+            console.log("no");
     }
 }
 
-function draw() {              
-    ctx.beginPath();               
-    ctx.moveTo(prevX,prevY);               
-    ctx.lineTo(currX,currY);               
-    ctx.lineWidth = y; 
-    ctx.lineCap = 'round';              
-    ctx.stroke();  
+function selectObject() {
+    canvas.isDrawingMode = !canvas.isDrawingMode;
 }
 
-function erase() {
-    var m = confirm("Want to clear");
-    if (m) {
-        ctx.clearRect(0, 0, w, h);
-        document.getElementById("canvasimg").style.display = "none";
+function deleteObjects(){
+    var active = canvas.getActiveObjects();
+    if (active) {
+        canvas.discardActiveObject();
+        canvas.remove(...active);
     }
 }
 
-function save() {
-    document.getElementById("canvasimg").style.border = "2px solid";
-    var dataURL = canvas.toDataURL();
-    document.getElementById("canvasimg").src = dataURL;
-    document.getElementById("canvasimg").style.display = "inline";
+var canvas = this.__canvas = new fabric.Canvas('c');
+
+if (canvas.freeDrawingBrush) {
+    canvas.freeDrawingBrush.color = x;
+    canvas.freeDrawingBrush.width = y;
 }
 
-function findxy(res, e) {
-    if (res == 'down') {
-        prevX = currX;
-        prevY = currY;
-        currX = e.clientX - canvas.offsetLeft;
-        currY = e.clientY - canvas.offsetTop;
+function range(tobj) {
+    y=tobj.value;
+    tctx.clearRect(0, 0, 60, 35);
+    tctx.beginPath();               
+    tctx.moveTo(y/2, 35/2);               
+    tctx.lineTo(60-y/2,35/2);               
+    tctx.lineWidth = y; 
+    tctx.lineCap = 'round';              
+    tctx.stroke();
+    canvas.freeDrawingBrush.width = y;
+}
 
-        flag = true;
-        dot_flag = true;
-        if (dot_flag) {
-            ctx.beginPath();
-            ctx.arc(currX, currY, y/4, 0, 2*Math.PI);
-            ctx.strokeStyle = x;
-            ctx.lineWidth = y/2;
-            ctx.stroke();
-            dot_flag = false;
-        }
-    }
-    if (res == 'up' || res == 'out') {
-        flag = false;
-    }
-    if (res == 'in') {
-        flag = true;
-    }
-    if (res == 'move' && flag) {
-            prevX = currX;
-            prevY = currY;
-            currX = e.clientX - canvas.offsetLeft;
-            currY = e.clientY - canvas.offsetTop;
-            draw();
-    }
+$('body').keydown(function(event){
+
+    if(event.keyCode == 46)
+        deleteObjects()
+
+})
+
+$(document).bind('keypress', function(event) {
+    if( event.which === 65 && event.shiftKey ) 
+        selectAll()
+});
+
+selectAll = () => {
+    canvas.discardActiveObject();
+    var sel = new fabric.ActiveSelection(canvas.getObjects(), {
+    canvas: canvas,
+    });
+    canvas.setActiveObject(sel);
+    canvas.requestRenderAll();
 }
